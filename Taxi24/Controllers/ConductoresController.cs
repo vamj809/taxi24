@@ -46,10 +46,13 @@ namespace Taxi24.Controllers
         /// Devuelve una lista de todos los conductores disponibles en un radio de 3km para una ubicación específica.
         /// </summary>
         /// <returns></returns>
-        // GET: api/Conductores/available
-        [HttpGet("available")]
+        // GET: api/Conductores/available-radio
+        [HttpGet("available-radio")]
         public async Task<ActionResult<IEnumerable<Conductor>>> GetConductoresDisponibles(double Latitud, double Longitud) {
             var Ubicacion = new GeoCoordinate(Latitud, Longitud);
+
+            var conductores = await _context.Conductores.ToListAsync();
+
             return await _context.Conductores.Where(conductor => Ubicacion.GetDistanceTo(new GeoCoordinate(conductor.Latitud, conductor.Longitud)) <= 3000).ToListAsync();
         }
 
