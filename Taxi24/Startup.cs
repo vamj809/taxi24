@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Taxi24.Models;
 
 namespace Taxi24
 {
@@ -29,6 +30,7 @@ namespace Taxi24
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Taxi24", Version = "v1" });
             });
+            services.AddDbContext<Taxi24DBContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
