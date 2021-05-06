@@ -87,17 +87,6 @@ namespace Taxi24.Models
                 entity.Property(e => e.ConductorId).HasColumnName("ConductorID");
 
                 entity.Property(e => e.PasajeroId).HasColumnName("PasajeroID");
-
-                entity.HasOne(d => d.Conductor)
-                    .WithMany(p => p.Viajes)
-                    .HasForeignKey(d => d.ConductorId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("ConductorViajes");
-
-                entity.HasOne(d => d.Pasajero)
-                    .WithMany(p => p.Viajes)
-                    .HasForeignKey(d => d.PasajeroId)
-                    .HasConstraintName("PasajeroViajes");
             });
 
             OnModelCreatingPartial(modelBuilder);

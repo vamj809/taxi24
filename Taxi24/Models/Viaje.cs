@@ -11,8 +11,5 @@ namespace Taxi24.Models
         public int PasajeroId { get; set; }
         public int? ConductorId { get; set; }
         public bool Completado { get; set; }
-
-        public virtual Conductor Conductor { get; set; }
-        public virtual Pasajero Pasajero { get; set; }
     }
 }
