@@ -9,7 +9,7 @@ using Taxi24.Models;
 
 namespace Taxi24.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class IndexController : ControllerBase
     {
