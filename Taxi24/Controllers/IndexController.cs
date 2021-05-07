@@ -20,7 +20,7 @@ namespace Taxi24.Controllers
         /// Devuelve un listado de todos los controladores disponibles
         /// </summary>
         /// <returns></returns>
-        // GET: api/Index
+        // GET: /
         [HttpGet]
         public IEnumerable<string> GetControladores() {
 
