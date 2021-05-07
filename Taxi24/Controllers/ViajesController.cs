@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +20,111 @@ namespace Taxi24.Controllers
         {
             _context = context;
         }
+
+        /// <summary>
+        /// Crea una nueva solicitud de viaje sin completar.
+        /// </summary>
+        /// <returns></returns>
+        // POST: api/Viajes
+        [HttpPost]
+        public async Task<ActionResult<Viaje>> CreateViaje(Viaje viaje)
+        {
+            //Asegura que el viaje no se envie como completado.
+            viaje.Completado = false;
+
+            //Busca al conductor y valida si está disponible
+            var conductor = await _context.Conductores.FindAsync(viaje.ConductorId);
+            if(conductor == null) {
+                return NotFound($"Conductor de id {viaje.ConductorId} no existe.");
+            } else if(conductor.Disponible == false) {
+                return BadRequest($"Conductor de id {viaje.ConductorId} no está disponible.");
+            }
+
+            //Prepara las entidades
+            conductor.Disponible = false;
+            _context.Entry(conductor).State = EntityState.Modified;
+
+            _context.Viajes.Add(viaje);
+
+            //Guarda los cambios en la DB
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetViaje", new { id = viaje.Id }, viaje);
+        }
+
+        /// <summary>
+        /// Modifica un viaje de forma que se marque como completado.
+        /// </summary>
+        /// <returns></returns>
+        // PUT: api/Viajes/complete/1
+        [HttpPut("complete/{id}")]
+        public async Task<IActionResult> CompleteViaje(int id)
+        {
+            var viaje = await _context.Viajes.FindAsync(id);
+            var conductor = await _context.Conductores.FindAsync(viaje.ConductorId);
+
+            viaje.Completado = true;
+            conductor.Disponible = true;
+
+            _context.Entry(viaje).State = EntityState.Modified;
+            _context.Entry(conductor).State = EntityState.Modified;
+
+            try {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) {
+                if (!ViajeExists(id)) {
+                    return NotFound();
+                }
+                else {
+                    throw;
+                }
+            }
+
+            return Ok("Viaje completado.");
+        }
+
+        /// <summary>
+        /// Devuelve todos los viajes en curso (no-completados)
+        /// </summary>
+        /// <returns></returns>
+        // GET: api/Viajes/active
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<Viaje>>> GetViajesActivos()
+        {
+            return await _context.Viajes.Where(v => v.Completado == false).ToListAsync();
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // --------------------------------------------------------------------------------------------------------------------- //
+        // ----------------------------------------- END OF CUSTOM APPLICATION ACTIONS ----------------------------------------- //
+        // --------------------------------------------------------------------------------------------------------------------- //
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // PUT: api/Viajes/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutViaje(int id, Viaje viaje)
+        {
+            if (id != viaje.Id) {
+                return BadRequest();
+            }
+
+            _context.Entry(viaje).State = EntityState.Modified;
+
+            try {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException) {
+                if (!ViajeExists(id)) {
+                    return NotFound();
+                }
+                else {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
 
         // GET: api/Viajes
         [HttpGet]
@@ -39,48 +145,6 @@ namespace Taxi24.Controllers
             }
 
             return viaje;
-        }
-
-        // PUT: api/Viajes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutViaje(int id, Viaje viaje)
-        {
-            if (id != viaje.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(viaje).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ViajeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Viajes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Viaje>> PostViaje(Viaje viaje)
-        {
-            _context.Viajes.Add(viaje);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetViaje", new { id = viaje.Id }, viaje);
         }
 
         // DELETE: api/Viajes/5
