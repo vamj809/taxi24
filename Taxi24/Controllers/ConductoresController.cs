@@ -27,7 +27,7 @@ namespace Taxi24.Controllers
         /// <returns></returns>
         // GET: api/Conductores
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Conductor>>> GetConductores()
+        public async Task<ActionResult<IEnumerable<Conductor>>> GetAllConductores()
         {
             return await _context.Conductores.ToListAsync();
         }
@@ -51,9 +51,16 @@ namespace Taxi24.Controllers
         public async Task<ActionResult<IEnumerable<Conductor>>> GetConductoresDisponibles(double Latitud, double Longitud) {
             var Ubicacion = new GeoCoordinate(Latitud, Longitud);
 
+            var resultado = new List<Conductor>();
             var conductores = await _context.Conductores.ToListAsync();
 
-            return await _context.Conductores.Where(conductor => Ubicacion.GetDistanceTo(new GeoCoordinate(conductor.Latitud, conductor.Longitud)) <= 3000).ToListAsync();
+            foreach (var conductor in conductores) {
+                if(Ubicacion.GetDistanceTo(new GeoCoordinate(conductor.Latitud, conductor.Longitud)) <= 3000) {
+                    resultado.Add(conductor);
+                }
+            }
+
+            return resultado;
         }
 
         /// <summary>
