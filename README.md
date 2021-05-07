@@ -14,7 +14,7 @@ Devuelve el listado de los controladores disponibles
 # Conductores #
 
 ## GET: /api/Conductores
-Devuelve EL listado de todos los conductores/pilotos.
+Devuelve el listado de todos los conductores/pilotos.
 
 ## GET: api/Conductores/available
 Devuelve una lista de todos los conductores disponibles (No se encuentran en medio de un viaje)
