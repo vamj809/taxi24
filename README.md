@@ -1,7 +1,7 @@
 # Taxi24
 Una RESTful API genérica para la industria del transporte.
 
-Utiliza un ejecutable para iniciar el servidor disponible en: http://localhost:5000 y este lo redirigirá a la dirección segura https://localhost:5001
+Utiliza un ejecutable para iniciar el servidor disponible en: http://localhost:5000 y este lo redirigirá a la dirección segura https://localhost:5001. Sin embargo, debe tomar en cuenta que necesita conexión a internet para poder acceder a la base de datos que se aloja en la nube usando ElephantSQL.
 
 Puede utilizar Postman para comprobar cada uno de los requests disponibles.
 
